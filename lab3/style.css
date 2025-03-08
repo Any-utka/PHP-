@@ -1,0 +1,55 @@
+table {
+    border: 3px solid black;
+    width: 700px;
+    height: 300px;
+    border-spacing: 5px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    background-color: rgb(209, 190, 162);
+}
+
+th {
+    background-color: #ada3a3;
+}
+.gallery {
+    display: grid;
+    gap: 10px; /* Расстояние между изображениями */
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.gallery img {
+    width: 100%; /* Растягиваем по размеру колонки */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+.image-table {
+    width: auto;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.image-table td {
+    width: 150px;  /* Фиксированная ширина ячеек */
+    height: 150px; /* Фиксированная высота ячеек */
+    padding: 5px;
+    border: 1px solid black;
+}
+
+.image-table td img {
+    width: 140px;  /* Фиксированный размер */
+    height: 140px; /* Фиксированный размер */
+    object-fit: cover; /* Обрезка для квадратной формы */
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}

@@ -1,8 +1,30 @@
 <?php
-/**
- * Подключает файл с функциями.
- */
-require_once('function.php'); 
+// Подключаем файл с функциями
+require_once('function.php');
+
+// Проверка на наличие транзакций в сессии
+if (isset($_SESSION['transactions'])) {
+    $transactions = $_SESSION['transactions']; // Доступ к транзакциям из сессии
+} else {
+    $transactions = []; // Если транзакции не существуют, создаём пустой массив
+}
+
+// Переменные для поиска
+$foundTransactionsByDescription = [];
+$foundTransactionById = null;
+
+// Поиск транзакций по описанию
+if (isset($_POST['search_description']) && !empty($_POST['description_part'])) {
+    $description_part = $_POST['description_part'];
+    $foundTransactionsByDescription = findTransactionByDescription($description_part);
+}
+
+// Поиск транзакции по ID
+if (isset($_POST['search_id']) && !empty($_POST['transaction_id'])) {
+    $transaction_id = $_POST['transaction_id'];
+    $foundTransactionById = findTransactionById($transaction_id);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -101,6 +123,95 @@ require_once('function.php');
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <!-- Форма для поиска по описанию -->
+    <h2>Поиск транзакций по описанию</h2>
+    <form method="POST">
+        <label for="description_part">Часть описания:</label>
+        <input type="text" id="description_part" name="description_part" required>
+        <button type="submit" name="search_description">Поиск</button>
+    </form>
+
+    <?php if (!empty($foundTransactionsByDescription)): ?>
+        <h3>Результаты поиска по описанию:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Сумма</th>
+                    <th>Описание</th>
+                    <th>Организация</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($foundTransactionsByDescription as $transaction): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($transaction['id']) ?></td>
+                        <td><?= htmlspecialchars($transaction['date']) ?></td>
+                        <td><?= number_format($transaction['amount'], 2, '.', ' ') ?></td>
+                        <td><?= htmlspecialchars($transaction['description']) ?></td>
+                        <td><?= htmlspecialchars($transaction['merchant']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- Форма для поиска по ID -->
+    <h2>Поиск транзакции по ID</h2>
+    <form method="POST">
+        <label for="transaction_id">ID транзакции:</label>
+        <input type="number" id="transaction_id" name="transaction_id" required>
+        <button type="submit" name="search_id">Поиск</button>
+    </form>
+
+    <?php if (!empty($foundTransactionById)): ?>
+        <h3>Результаты поиска по ID:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Дата</th>
+                    <th>Сумма</th>
+                    <th>Описание</th>
+                    <th>Организация</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($foundTransactionById as $transaction): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($transaction['id']) ?></td>
+                        <td><?= htmlspecialchars($transaction['date']) ?></td>
+                        <td><?= number_format($transaction['amount'], 2, '.', ' ') ?></td>
+                        <td><?= htmlspecialchars($transaction['description']) ?></td>
+                        <td><?= htmlspecialchars($transaction['merchant']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <!-- Форма для добавления новой транзакции -->
+    <h2>Добавить новую транзакцию</h2>
+    <form method="POST">
+        <label for="new_id">ID транзакции:</label>
+        <input type="number" id="new_id" name="new_id" required><br>
+
+        <label for="new_date">Дата (YYYY-MM-DD):</label>
+        <input type="date" id="new_date" name="new_date" required><br>
+
+        <label for="new_amount">Сумма:</label>
+        <input type="number" step="0.01" id="new_amount" name="new_amount" required><br>
+
+        <label for="new_description">Описание:</label>
+        <input type="text" id="new_description" name="new_description" required><br>
+
+        <label for="new_merchant">Организация:</label>
+        <input type="text" id="new_merchant" name="new_merchant" required><br>
+
+        <button type="submit" name="add_transaction">Добавить транзакцию</button>
+    </form>
 
     <h2>Галерея изображений</h2>
     <nav class="navbar">

@@ -1,30 +1,37 @@
 <?php
+declare(strict_types=1);
+
+// Инициализируем сессии для хранения данных транзакций
+session_start();
+
 /**
  * Массив транзакций, содержащий информацию о каждой операции.
  */
-$transactions = [
-    [
-        'id' => 1,
-        'date' => '2022-12-25',
-        'amount' => 500.00,
-        'description' => 'Salary for good studies',
-        'merchant' => 'Work of Web'
-    ],
-    [
-        'id' => 2,
-        'date' => '2025-02-17',
-        'amount' => 200.50,
-        'description' => 'Social bursary',
-        'merchant' => 'University of London'
-    ],
-    [
-        'id' => 3,
-        'date' => '2024-08-23',
-        'amount' => 350.00,
-        'description' => 'Online shopping',
-        'merchant' => 'E-shop'
-    ]
-];
+if (!isset($_SESSION['transactions'])) {
+    $_SESSION['transactions'] = [
+        [
+            'id' => 1,
+            'date' => '2022-12-25',
+            'amount' => 500.00,
+            'description' => 'Salary for good studies',
+            'merchant' => 'Work of Web'
+        ],
+        [
+            'id' => 2,
+            'date' => '2025-02-17',
+            'amount' => 200.50,
+            'description' => 'Social bursary',
+            'merchant' => 'University of London'
+        ],
+        [
+            'id' => 3,
+            'date' => '2024-08-23',
+            'amount' => 350.00,
+            'description' => 'Online shopping',
+            'merchant' => 'E-shop'
+        ]
+    ];
+}
 
 /**
  * Подсчитывает общую сумму всех транзакций.
@@ -34,6 +41,59 @@ $transactions = [
  */
 function calculateTotalAmount(array $transactions): float {
     return array_sum(array_column($transactions, 'amount'));
+}
+
+/**
+ * Ищет транзакции по части описания.
+ * 
+ * @param string $descriptionPart Часть описания для поиска
+ * @return array Массив транзакций, чьи описания содержат указанную строку
+ */
+function findTransactionByDescription(string $descriptionPart): array {
+    $foundTransactions = [];
+
+    // Используем цикл foreach для поиска
+    foreach ($_SESSION['transactions'] as $transaction) {
+        if (strpos($transaction['description'], $descriptionPart) !== false) {
+            $foundTransactions[] = $transaction;
+        }
+    }
+
+    return $foundTransactions;
+}
+
+/**
+ * Ищет транзакцию по идентификатору с использованием цикла foreach.
+ * 
+ * @param int $id Идентификатор транзакции для поиска
+ * @return array Массив с найденной транзакцией или пустой массив, если не найдена
+ */
+function findTransactionById(int $id): array {
+    foreach ($_SESSION['transactions'] as $transaction) {
+        if ($transaction['id'] === $id) {
+            return [$transaction];  // Возвращаем найденную транзакцию как массив
+        }
+    }
+    return [];  // Если транзакция не найдена
+}
+
+/**
+ * Добавляет новую транзакцию в массив.
+ * 
+ * @param int $id Идентификатор транзакции
+ * @param string $date Дата транзакции
+ * @param float $amount Сумма транзакции
+ * @param string $description Описание транзакции
+ * @param string $merchant Организация, с которой связана транзакция
+ */
+function addTransaction(int $id, string $date, float $amount, string $description, string $merchant): void {
+    $_SESSION['transactions'][] = [
+        'id' => $id,
+        'date' => $date,
+        'amount' => $amount,
+        'description' => $description,
+        'merchant' => $merchant
+    ];
 }
 
 /**
@@ -55,8 +115,7 @@ function daysSinceTransaction(string $date): int {
  * @return void
  */
 function sortTransactionsByDate(): void {
-    global $transactions;
-    usort($transactions, fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
+    usort($_SESSION['transactions'], fn($a, $b) => strtotime($a['date']) <=> strtotime($b['date']));
 }
 
 /**
@@ -66,8 +125,36 @@ function sortTransactionsByDate(): void {
  * @return void
  */
 function sortTransactionsByAmountDesc(): void {
-    global $transactions;
-    usort($transactions, fn($a, $b) => $b['amount'] <=> $a['amount']);
+    usort($_SESSION['transactions'], fn($a, $b) => $b['amount'] <=> $a['amount']);
+}
+
+// Переменные для поиска
+$foundTransactionsByDescription = [];
+$foundTransactionById = null;
+
+// Добавление новой транзакции
+if (isset($_POST['add_transaction'])) {
+    $new_transaction = [
+        'id' => (int)$_POST['new_id'],
+        'date' => $_POST['new_date'],
+        'amount' => (float)$_POST['new_amount'],
+        'description' => $_POST['new_description'],
+        'merchant' => $_POST['new_merchant'],
+    ];
+    // Добавляем транзакцию в сессию
+    addTransaction($new_transaction['id'], $new_transaction['date'], $new_transaction['amount'], $new_transaction['description'], $new_transaction['merchant']);
+}
+
+// Поиск транзакции по ID
+if (isset($_POST['search_id']) && !empty($_POST['transaction_id'])) {
+    $transaction_id = (int)$_POST['transaction_id'];
+    $foundTransactionById = findTransactionById($transaction_id);
+}
+
+// Поиск транзакций по описанию
+if (isset($_POST['search_description']) && !empty($_POST['description_part'])) {
+    $description_part = $_POST['description_part'];
+    $foundTransactionsByDescription = findTransactionByDescription($description_part);
 }
 
 /**
@@ -87,9 +174,10 @@ function getImages(string $dir): array {
     }
 
     $files = array_values(array_diff(scandir($dir), ['.', '..']));
-    
+
     return array_map(fn($file) => $dir . $file, $files);
 }
 
 // Получаем список изображений из директории 'images/'
 $images = getImages('images/');
+?>

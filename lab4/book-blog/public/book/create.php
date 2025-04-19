@@ -1,4 +1,10 @@
 <?php
+/**
+ * Подключение обработчика для создания книги.
+ * 
+ * Этот файл подключает обработчик CreateBookHandler.php для обработки формы добавления новой книги.
+ * Он генерирует HTML-форму для ввода данных о книге и их отправки на сервер.
+ */
 require_once __DIR__ . '/../../src/Handlers/CreateBookHandler.php';
 ?>
 
@@ -14,7 +20,6 @@ require_once __DIR__ . '/../../src/Handlers/CreateBookHandler.php';
     <h2>Добавить новую книгу</h2>
 
     <form method="POST" action="">
-
         <label for="title">Название книги:</label>
         <input type="text" id="title" name="title" required><br><br>
 

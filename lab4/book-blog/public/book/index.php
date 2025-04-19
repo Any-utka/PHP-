@@ -1,10 +1,16 @@
 <?php
+/**
+ * Чтение и фильтрация книг по жанру.
+ *
+ * Этот файл читает данные из JSON-файла, фильтрует книги по жанру (если выбран), а также
+ * предоставляет возможность отображать последние 2 книги. Пользователь может добавить
+ * книгу через ссылку на другую страницу.
+ */
 
-// Чтение данных из файла
 $filePath = __DIR__ . '/../../storage/books.json';
+
 $books = file_exists($filePath) ? json_decode(file_get_contents($filePath), true) : [];
 
-// Фильтрация по жанру
 $filteredBooks = [];
 
 if (isset($_GET['tags']) && $_GET['tags']) {
@@ -18,6 +24,10 @@ if (isset($_GET['tags']) && $_GET['tags']) {
     $filteredBooks = $books;
 }
 
+$showLastTwo = isset($_GET['last']) && $_GET['last'] === '1';
+if ($showLastTwo) {
+    $filteredBooks = array_slice($filteredBooks, -2);
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +41,6 @@ if (isset($_GET['tags']) && $_GET['tags']) {
 
     <h2>Библиотека</h2>
 
-    <!-- Форма фильтрации -->
     <form method="GET" action="">
         <label for="tags">Выберите жанр:</label>
         <select name="tags" id="tags">
@@ -59,6 +68,23 @@ if (isset($_GET['tags']) && $_GET['tags']) {
                 </li>
             <?php endforeach; ?>
         </ul>
+    <?php endif; ?>
+
+    <?php if (!$showLastTwo): ?>
+        <form method="GET" action="">
+            <?php if (isset($_GET['tags']) && $_GET['tags']): ?>
+                <input type="hidden" name="tags" value="<?= htmlspecialchars($_GET['tags']) ?>">
+            <?php endif; ?>
+            <input type="hidden" name="last" value="1">
+            <button type="submit">Показать последние 2 книги</button>
+        </form>
+    <?php else: ?>
+        <form method="GET" action="">
+            <?php if (isset($_GET['tags']) && $_GET['tags']): ?>
+                <input type="hidden" name="tags" value="<?= htmlspecialchars($_GET['tags']) ?>">
+            <?php endif; ?>
+            <button type="submit">Показать все книги</button>
+        </form>
     <?php endif; ?>
 
     <a href="create.php">Добавить книгу</a>

@@ -1,0 +1,215 @@
+/* Общие стили */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 36px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+form input, form button {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+form input {
+    background-color: #f9f9f9;
+}
+
+form button {
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #4cae4c;
+}
+
+a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Центрированное содержимое */
+.center-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+/* Кнопка "Выйти" */
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+}
+
+.logout-button a {
+    background-color: #ff4d4d;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.logout-button a:hover {
+    background-color: #cc0000;
+}
+
+/* Стиль для профиля */
+.profile-card {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.profile-card h1 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.profile-card p {
+    color: #555;
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.profile-card a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.profile-card a:hover {
+    text-decoration: underline;
+}
+
+/* Стили для кнопки выхода */
+.profile-card a.logout {
+    background-color: #ff4d4d;
+    color: rgb(250, 244, 161);
+    padding: 12px 25px;
+    border-radius: 25px;
+    margin-top: 25px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.profile-card a.logout:hover {
+    background-color: #cc0000;
+}
+
+/* Стили для страницы администратора */
+.admin-panel {
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.admin-panel h2 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.admin-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.admin-panel th, .admin-panel td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-panel th {
+    background-color: #f7f7f7;
+    color: #555;
+    font-weight: 500;
+}
+
+.admin-panel td a {
+    color: #f44336;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background-color: #f44336;
+    color: rgb(209, 219, 215);
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.admin-panel td a:hover {
+    background-color: #d32f2f;
+}
+
+.admin-panel .button {
+    background-color: #3b8c4f;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.admin-panel .button:hover {
+    background-color: #2e6e3b;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+
+    .profile-card, .admin-panel {
+        width: 90%;
+    }
+}

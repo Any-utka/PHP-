@@ -1,28 +1,43 @@
 <?php
-if(!empty($_POST)) {
+/**
+ * Проверяет, есть ли данные в массиве $_POST, и если да, подключает обработчик редактирования рецепта.
+ * Завершает выполнение скрипта после подключения обработчика.
+ */
+if (!empty($_POST)) {
     include_once "../handlers/recipe/edit.php";
     exit();
 }
-?> 
-
-<?php ob_start(); ?>
-
-<h2>Edit Book</h2>
-
-<?php
-// $id = $_GET['id'] ?? null;
-// Получаем книгу по ID
+ob_start(); 
+/**
+ * Проверяет, передан ли идентификатор книги. Если идентификатор отсутствует, завершает выполнение скрипта с сообщением об ошибке.
+ */
 if (empty($id)) {
     exit("Book not found!");
 }
 
+/**
+ * Создает подключение к базе данных MySQL и выполняет запрос для получения данных книги по её идентификатору.
+ * 
+ * @var PDO $pdo Объект подключения к базе данных.
+ * @var PDOStatement $stmt Подготовленный запрос для получения данных книги.
+ * @var array $book Ассоциативный массив с данными книги.
+ */
 $pdo = getMySQLConnection();
 $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
 $stmt->execute([$id]);
 $book = $stmt->fetch(PDO::FETCH_ASSOC);
 
+/**
+ * Форма для редактирования книги.
+ * 
+ * @var string $book['id'] Идентификатор книги.
+ * @var string $book['title'] Название книги.
+ * @var string $book['category_id'] Идентификатор категории книги.
+ * @var string $book['author'] Автор книги.
+ * @var string $book['description'] Описание книги.
+ * @var string $book['tags'] Теги книги.
+ */
 ?>
-
 <form action="/edit/<?= $book['id'] ?>" method="POST">
     <label for="title">Title:</label>
     <input type="text" name="title" value="<?= htmlspecialchars($book['title']) ?>" required><br><br>
@@ -42,5 +57,12 @@ $book = $stmt->fetch(PDO::FETCH_ASSOC);
     <button type="submit">Update Book</button>
 </form>
 
-<?php $content = ob_get_clean(); ?>
-<?php include '../templates/layout.php'; ?>
+<?php
+/**
+ * Завершает буферизацию вывода и сохраняет содержимое в переменную $content.
+ * Подключает шаблон layout.php для отображения содержимого страницы.
+ * 
+ * @var string $content Содержимое страницы.
+ */
+$content = ob_get_clean();
+include '../templates/layout.php';

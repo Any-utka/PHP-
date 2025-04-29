@@ -1,34 +1,35 @@
 <?php
-   require_once '../config/db.php';
-   require_once '../db.php';
-   require_once '../helpers.php';
-   // Подключаемся к PostgreSQL
-    $pdo = getPostgreSQLConnection();
-    // Получаем информацию о книге
-    $book_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-    if (!$book_id) {
+    /**
+     * Проверяет, является ли переменная $id пустой.
+     * Если $id пустой, завершает выполнение скрипта с сообщением об ошибке.
+     *
+     * @param mixed $id Идентификатор книги, который должен быть проверен.
+     * @return void
+     */
+    if (empty($id)) {
         exit("Book not found!");
     }
 
-    $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
-    $stmt->execute([$book_id]);
-    $book = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // Получаем список пользователей для выпадающего списка
-    $stmt = $pdo->query("SELECT id, name FROM users ORDER BY name");
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-   ?>
-
-<?php
-    if(empty($id)) {
-        exit("Book not found!");
-    }
+    /**
+     * Создает подключение к базе данных MySQL и выполняет запрос для получения данных книги.
+     * Подготавливает SQL-запрос для выборки книги по идентификатору и выполняет его.
+     *
+     * @param PDO $pdo Объект подключения к базе данных.
+     * @param int $id Идентификатор книги, используемый в запросе.
+     * @return array|false Возвращает массив с данными книги или false, если книга не найдена.
+     */
     $pdo = getMySQLConnection();
     $stmt = $pdo->prepare("SELECT * FROM books WHERE id = ?");
     $stmt->execute([$id]);
     $book = $stmt->fetch(PDO::FETCH_ASSOC);
-?>
-<?php ob_start(); ?>
+
+    /**
+     * Отображает информацию о книге, включая заголовок, категорию, автора, описание и теги.
+     * Также предоставляет ссылки для редактирования и удаления книги.
+     *
+     * @var array $book Массив с данными книги, полученными из базы данных.
+     */
+ob_start(); ?>
 
 
 <h2><?= htmlspecialchars($book['title']) ?></h2>
@@ -41,25 +42,19 @@
 <a href="/edit/<?= $book['id'] ?>">Edit</a> 
 <a href="/delete/<?= $book['id'] ?>">Delete</a>
 
-<h3>Rate this Book</h3>
-<form action="/handlers/recipe/rate.php" method="post">
-    <input type="hidden" name="book_id" value="<?= htmlspecialchars($book['id']) ?>">
 
-    <label for="user_id">Select User:</label>
-    <select name="user_id" id="user_id" required>
-        <option value="" disabled selected>Choose user</option>
-        <?php foreach ($users as $user): ?>
-            <option value="<?= $user['id'] ?>">
-                <?= htmlspecialchars($user['name']) ?> (ID: <?= $user['id'] ?>)
-            </option>
-        <?php endforeach; ?>
-    </select><br><br>
+<h3>Rate this Book</h3>
+<form action="handlers/recipe/rate" method="POST">
+    <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
+    
+    <label for="user_id">User ID:</label>
+    <input type="number" name="user_id" required><br><br>
 
     <label for="rating">Rating (1-5):</label>
-    <input type="number" id="rating" name="rating" min="1" max="5" required><br><br>
+    <input type="number" name="rating" min="1" max="5" required><br><br>
 
     <label for="comment">Comment:</label>
-    <textarea id="comment" name="comment"></textarea><br><br>
+    <textarea name="comment"></textarea><br><br>
 
     <button type="submit">Submit Rating</button>
 </form>

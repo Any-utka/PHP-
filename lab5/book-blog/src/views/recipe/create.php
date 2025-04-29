@@ -1,24 +1,23 @@
 <?php
-if(!empty($_POST)) {
+/**
+ * Проверяет, была ли отправлена форма методом POST.
+ * Если данные отправлены, подключает обработчик создания рецепта
+ * и завершает выполнение скрипта.
+ */
+if (!empty($_POST)) {
     include_once "../handlers/recipe/create.php";
     exit();
 }
-?>
-
-<?php ob_start(); ?>
-
-<h2>Add a New Book</h2>
-
-<?php
-// Подключаемся к базе данных и пытаемся получить категории
+/**
+ * Подключается к базе данных и получает список категорий.
+ * Если подключение не удалось, выводит сообщение об ошибке и завершает выполнение.
+ * Если категории отсутствуют, выводит соответствующее сообщение.
+ *
+ * @throws PDOException Если не удалось подключиться к базе данных.
+ */
 try {
-    $pdo = getMySQLConnection(); // Подключение к MySQL
+    $pdo = getMySQLConnection();
     $categories = $pdo->query("SELECT id, name FROM categories")->fetchAll(PDO::FETCH_ASSOC);
-    
-/*    // Для отладки — выводим содержимое массива категорий
-    echo '<pre>';
-    var_dump($categories); // Выводим данные категорий для отладки
-    echo '</pre>';*/
 } catch (PDOException $e) {
     die("Error connecting to the database: " . $e->getMessage());
 }
@@ -27,8 +26,18 @@ try {
 if (empty($categories)) {
     echo "No categories found!";
 }
+/**
+ * HTML-форма для добавления новой книги.
+ * Поля формы:
+ * - title (string): Название книги (обязательное поле).
+ * - category_id (int): Идентификатор категории (обязательное поле).
+ * - author (string): Автор книги (необязательное поле).
+ * - description (string): Описание книги (необязательное поле).
+ * - tags (string): Теги книги (необязательное поле).
+ *
+ * Данные отправляются методом POST на маршрут "/create".
+ */
 ?>
-
 <form action="/create" method="POST">
     <label for="title">Title:</label>
     <input type="text" name="title" required><br><br>
@@ -53,5 +62,11 @@ if (empty($categories)) {
     <button type="submit">Add Book</button>
 </form>
 
-<?php $content = ob_get_clean(); ?>
-<?php include '../templates/layout.php'; ?>
+<?php
+/**
+ * Буферизирует вывод HTML-контента и подключает общий шаблон.
+ * Шаблон layout.php использует переменную $content для отображения содержимого.
+ */
+$content = ob_get_clean();
+include '../templates/layout.php';
+

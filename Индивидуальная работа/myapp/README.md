@@ -242,8 +242,7 @@
   
    ![Img-7](https://imgur.com/Q9GmLHc.png)
    Также, после выхода из системы выходит следующее
-   
-    ![Img-8](https://imgur.com/5OnABzd.png)
+    ![Img-8](https://imgur.com/5OnABzd.png) 
 11) Если зайти в профиль, как простой пользователь и нажать на кнопку для редактирования статьи, видим следующее
   
    ![Img-9](https://imgur.com/gvo3o7h.png)
